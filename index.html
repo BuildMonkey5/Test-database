@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Medicine Information</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .thumbnail {
+      width: 100px;
+      height: auto;
+    }
+    #medicinePopup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border: 1px solid #ccc;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+    }
+    #medicinePopup img {
+      max-width: 100px;
+      height: auto;
+    }
+    #popupClose {
+      cursor: pointer;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container mt-3">
+  <h3>Medicine Information</h3>
+  <table id="medicineTable" class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Strength</th>
+        <th>Volume</th>
+        <th>Form</th>
+        <th>Quantity</th>
+        <th>Where Used</th>
+        <th>Image</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Rows will be added dynamically -->
+    </tbody>
+  </table>
+</div>
+
+<div id="medicinePopup">
+  <span id="popupClose">&times;</span>
+  <h4 class="popup-name"></h4>
+  <p class="popup-strength"></p>
+  <p class="popup-volume"></p>
+  <p class="popup-form"></p>
+  <p class="popup-quantity"></p>
+  <p class="popup-where-used"></p>
+  <p class="popup-description"></p>
+  <img src="" alt="Medicine Image">
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const medicines = [
+        { name: 'Bacitracin', strength: '500 units/gm', volume: '0.9 gm', form: 'Ointment', quantity_in_pack: 30, where_used: 'Topical', image: 'images/bacitracin.jpg', description: 'An ointment used for topical infections.' },
+        { name: 'Loperamide (Imodium)', strength: '2 mg', volume: null, form: 'Tablets', quantity_in_pack: 40, where_used: 'Oral', image: 'images/loperamide.jpg', description: 'A medication used to treat diarrhea.' },
+        { name: 'Fexofenadine (Allegra)', strength: '180 mg', volume: null, form: 'Tablets', quantity_in_pack: 100, where_used: 'Oral', image: 'images/fexofenadine.jpg', description: 'An antihistamine for allergy relief.' },
+        { name: 'Loratadine (Claritin)', strength: '10 mg', volume: null, form: 'Tablets', quantity_in_pack: 375, where_used: 'Oral', image: 'images/loratadine.jpg', description: 'An antihistamine used for seasonal allergies.' },
+        { name: 'Olopatadine (Pataday)', strength: '0.2 %', volume: '2.5 mL', form: 'Eye Drops', quantity_in_pack: 6, where_used: 'Eye', image: 'images/olopatadine.jpg', description: 'Used for eye allergy symptoms.' },
+        { name: 'Oxymetazoline (Afrin)', strength: '0.05 %', volume: '15 mL', form: 'Nasal Spray', quantity_in_pack: 10, where_used: 'Intranasal', image: 'images/oxymetazoline.jpg', description: 'A nasal spray for congestion.' },
+        { name: 'Pseudoephedrine (Sudafed 12 Hour)', strength: '120 mg', volume: null, form: 'Decongestant pills', quantity_in_pack: 100, where_used: 'Oral', image: 'images/pseudoephedrine.jpg', description: 'A decongestant for nasal congestion.' },
+        { name: 'Carboxymethyl cellulose (Refresh Plus)', strength: '0.5 %', volume: '0.4 mL', form: 'Eye Drops', quantity_in_pack: 40, where_used: 'Eye', image: 'images/carboxymethyl.jpg', description: 'Lubricates and protects dry eyes.' },
+        { name: 'Hypromellose (Nature’s Tears)', strength: '0.4 %', volume: '15 mL', form: 'Eye Drops', quantity_in_pack: 2, where_used: 'Eye', image: 'images/hypromellose.jpg', description: 'Relieves dry eyes.' },
+        { name: 'Mineral Oil and White Petrolatum (Refresh PM)', strength: '42.5 %; 57.3 %', volume: '3.5 gm', form: 'Ointment', quantity_in_pack: 2, where_used: 'Eye', image: 'images/mineral_oil.jpg', description: 'Moisturizes and protects dry eyes.' },
+        { name: 'Sodium Chloride (AYR Saline)', strength: '2 %; 20 mg/mL', volume: '5 mL', form: 'Nasal mist/gel', quantity_in_pack: 3, where_used: 'Intranasal', image: 'images/sodium_chloride.jpg', description: 'Nasal saline spray for congestion relief.' },
+        { name: 'Acetaminophen (Tylenol)', strength: '325 mg', volume: null, form: 'Tablets', quantity_in_pack: 150, where_used: 'Oral', image: 'images/acetaminophen.jpg', description: 'Pain reliever and fever reducer.' },
+        { name: 'Aspirin', strength: '325 mg', volume: null, form: 'Tablets', quantity_in_pack: 60, where_used: 'Oral', image: 'images/aspirin.jpg', description: 'Pain relief and anti-inflammatory medication.' },
+        { name: 'Ibuprofen (Motrin)', strength: '400 mg', volume: null, form: 'Tablets', quantity_in_pack: 400, where_used: 'Oral', image: 'images/ibuprofen.jpg', description: 'Anti-inflammatory and pain relief medication.' },
+        { name: 'Melatonin', strength: '3 mg', volume: null, form: 'Tablets', quantity_in_pack: 60, where_used: 'Oral', image: 'images/melatonin.jpg', description: 'Sleep aid.' },
+        { name: 'Zaleplon (Sonata)', strength: '10 mg', volume: null, form: 'Liquid Sedative', quantity_in_pack: 100, where_used: 'Oral', image: 'images/zaleplon.jpg', description: 'Short-acting sleep aid.' },
+        { name: 'Zolpidem (Ambien)', strength: '10 mg', volume: null, form: 'Tablets Sedative', quantity_in_pack: 200, where_used: 'Oral', image: 'images/zolpidem.jpg', description: 'Sedative for insomnia.' },
+        { name: 'Hydrocortisone', strength: '1 %', volume: '0.9 gm', form: 'Cream', quantity_in_pack: 60, where_used: 'Topical', image: 'images/hydrocortisone.jpg', description: 'Anti-inflammatory cream for skin conditions.' },
+        { name: 'Mometasone (Nasonex)', strength: '50 mcg', volume: '17 gm', form: 'Nasal Spray', quantity_in_pack: 3, where_used: 'Intranasal', image: 'images/mometasone.jpg', description: 'Nasal steroid for allergy symptoms.' },
+        { name: 'Caffeine (Vivarin)', strength: '200 mg', volume: null, form: 'Tablets', quantity_in_pack: 100, where_used: 'Oral', image: 'images/caffeine.jpg', description: 'Stimulant to increase alertness.' },
+        { name: 'Modafinil (Provigil)', strength: '200 mg', volume: null, form: 'Tablets', quantity_in_pack: 40, where_used: 'Oral', image: 'images/modafinil.jpg', description: 'Medication to promote wakefulness.' },
+        { name: 'Bisacodyl (Dulcolax)', strength: '5 mg', volume: null, form: 'Tablets', quantity_in_pack: 30, where_used: 'Oral', image: 'images/bisacodyl.jpg', description: 'Laxative for constipation relief.' },
+        { name: 'Docusate Sodium (Colace)', strength: '100 mg', volume: null, form: 'Tablets', quantity_in_pack: 100, where_used: 'Oral', image: 'images/docusate_sodium.jpg', description: 'Stool softener for constipation.' },
+        { name: 'Lactulose', strength: '10 g/15 mL', volume: '15 mL', form: 'Liquid', quantity_in_pack: 30, where_used: 'Oral', image: 'images/lactulose.jpg', description: 'Laxative for constipation.' },
+        { name: 'Senna (Senokot)', strength: '8.6 mg', volume: null, form: 'Tablets', quantity_in_pack: 60, where_used: 'Oral', image: 'images/senna.jpg', description: 'Laxative for constipation.' },
+        { name: 'Diphenhydramine (Benadryl)', strength: '25 mg', volume: null, form: 'Capsules', quantity_in_pack: 100, where_used: 'Oral', image: 'images/diphenhydramine.jpg', description: 'Antihistamine for allergies and sleep aid.' },
+        { name: 'Cetirizine (Zyrtec)', strength: '10 mg', volume: null, form: 'Tablets', quantity_in_pack: 60, where_used: 'Oral', image: 'images/cetirizine.jpg', description: 'Antihistamine for allergy relief.' },
+        { name: 'Naproxen (Aleve)', strength: '220 mg', volume: null, form: 'Tablets', quantity_in_pack: 100, where_used: 'Oral', image: 'images/naproxen.jpg', description: 'Anti-inflammatory for pain and fever.' }
+    ];
+
+    const tableBody = document.querySelector('#medicineTable tbody');
+
+    medicines.forEach(med => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${med.name}</td>
+            <td>${med.strength}</td>
+            <td>${med.volume ? med.volume : 'N/A'}</td>
+            <td>${med.form}</td>
+            <td>${med.quantity_in_pack}</td>
+            <td>${med.where_used}</td>
+            <td><img src="${med.image}" class="thumbnail" alt="${med.name}" data-toggle="popover" title="${med.name}"></td>
+        `;
+        row.querySelector('img').addEventListener('click', function() {
+            showPopup(med);
+        });
+        tableBody.appendChild(row);
+    });
+
+    function showPopup(med) {
+        const popup = document.getElementById('medicinePopup');
+        popup.querySelector('.popup-name').textContent = med.name;
+        popup.querySelector('.popup-strength').textContent = `Strength: ${med.strength}`;
+        popup.querySelector('.popup-volume').textContent = `Volume: ${med.volume ? med.volume : 'N/A'}`;
+        popup.querySelector('.popup-form').textContent = `Form: ${med.form}`;
+        popup.querySelector('.popup-quantity').textContent = `Quantity in Pack: ${med.quantity_in_pack}`;
+        popup.querySelector('.popup-where-used').textContent = `Where Used: ${med.where_used}`;
+        popup.querySelector('.popup-description').textContent = `Description: ${med.description}`;
+        popup.querySelector('img').src = med.image;
+        popup.style.display = 'block';
+    }
+
+    document.getElementById('popupClose').addEventListener('click', function() {
+        document.getElementById('medicinePopup').style.display = 'none';
+    });
+});
+</script>
+
+</body>
+</html>
