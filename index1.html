@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Medicine Information</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .thumbnail {
+            width: 100px;
+            height: auto;
+        }
+        #medicinePopup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border: 1px solid #ccc;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        #medicinePopup img {
+            max-width: 100px;
+            height: auto;
+        }
+        #popupClose {
+            cursor: pointer;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-3">
+        <h3>Medicine Information</h3>
+        <table id="medicineTable" class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Strength</th>
+                    <th>Volume</th>
+                    <th>Form</th>
+                    <th>Quantity</th>
+                    <th>Where Used</th>
+                    <th>Image</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Rows will be added dynamically -->
+            </tbody>
+        </table>
+    </div>
+    <div id="medicinePopup">
+        <span id="popupClose">&times;</span>
+        <h4 class="popup-name"></h4>
+        <p class="popup-strength"></p>
+        <p class="popup-volume"></p>
+        <p class="popup-form"></p>
+        <p class="popup-quantity"></p>
+        <p class="popup-where-used"></p>
+        <p class="popup-description"></p>
+        <img src="" alt="Medicine Image">
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Array of medicines
+            const medicines = [
+                {
+                    name: 'Bacitracin',
+                    strength: '500 units/gm',
+                    volume: '0.9 gm',
+                    form: 'Ointment',
+                    quantity_in_pack: 30,
+                    where_used: 'Topical',
+                    image: 'images/bacitracin.jpg',
+                    description: 'An ointment used for topical infections.'
+                },
+                {
+                    name: 'Loperamide (Imodium)',
+                    strength: '2 mg',
+                    volume: null,
+                    form: 'Tablets',
+                    quantity_in_pack: 40,
+                    where_used: 'Oral',
+                    image: 'images/loperamide.jpg',
+                    description: 'A medication used to treat diarrhea.'
+                },
+                // Add more medicines here as needed
+            ];
+
+            // Function to add medicines to the table
+            function addMedicinesToTable() {
+                const tableBody = document.querySelector('#medicineTable tbody');
+                medicines.forEach(med => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${med.name}</td>
+                        <td>${med.strength}</td>
+                        <td>${med.volume ? med.volume : 'N/A'}</td>
+                        <td>${med.form}</td>
+                        <td>${med.quantity_in_pack}</td>
+                        <td>${med.where_used}</td>
+                        <td><img src="${med.image}" class="thumbnail" alt="${med.name}"></td>
+                    `;
+                    row.querySelector('img').addEventListener('click', function() {
+                        showPopup(med);
+                    });
+                    tableBody.appendChild(row);
+                });
+            }
+
+            // Function to show the popup
+            function showPopup(med) {
+                const popup = document.getElementById('medicinePopup');
+                popup.querySelector('.popup-name').textContent = med.name;
+                popup.querySelector('.popup-strength').textContent = `Strength: ${med.strength}`;
+                popup.querySelector('.popup-volume').textContent = `Volume: ${med.volume ? med.volume : 'N/A'}`;
+                popup.querySelector('.popup-form').textContent = `Form: ${med.form}`;
+                popup.querySelector('.popup-quantity').textContent = `Quantity in Pack: ${med.quantity_in_pack}`;
+                popup.querySelector('.popup-where-used').textContent = `Where Used: ${med.where_used}`;
+                popup.querySelector('.popup-description').textContent = `Description: ${med.description}`;
+                popup.querySelector('img').src = med.image;
+                popup.style.display = 'block';
+            }
+
+            // Function to hide the popup
+            function hidePopup() {
+                document.getElementById('medicinePopup').style.display = 'none';
+            }
+
+            // Event listener for the close button
+            document.getElementById('popupClose').addEventListener('click', hidePopup);
+
+            // Add medicines to the table when the document is ready
+            addMedicinesToTable();
+        });
+    </script>
+</body>
+</html>
